@@ -1,16 +1,11 @@
 import { Link } from '@inertiajs/react';
-import { BookOpen, FolderGit2, LayoutGrid } from 'lucide-react';
-import AppLogo from '@/components/app-logo';
-import { NavFooter } from '@/components/nav-footer';
+import { LayoutGrid, PlusSquare, Bookmark } from 'lucide-react';
 import { NavMain } from '@/components/nav-main';
-import { NavUser } from '@/components/nav-user';
 import {
     Sidebar,
     SidebarContent,
-    SidebarFooter,
     SidebarHeader,
     SidebarMenu,
-    SidebarMenuButton,
     SidebarMenuItem,
 } from '@/components/ui/sidebar';
 import { dashboard } from '@/routes';
@@ -23,53 +18,43 @@ const mainNavItems: NavItem[] = [
         icon: LayoutGrid,
     },
     {
-    title: 'Add Subscription',
-    href: '/subscriptions/create', // 🔹 Ngayon papunta na sa hiwalay na page
-    icon: LayoutGrid,
+        title: 'Add Subscription',
+        href: '/subscriptions/create',
+        icon: PlusSquare,
     },
     {
-        title: 'List Subscription',
-        href: 'subscription',
-        icon: LayoutGrid,
-    },
-];
-
-const footerNavItems: NavItem[] = [
-    {
-        title: 'Repository',
-        href: 'https://github.com/laravel/react-starter-kit',
-        icon: FolderGit2,
-    },
-    {
-        title: 'Documentation',
-        href: 'https://laravel.com/docs/starter-kits#react',
-        icon: BookOpen,
+        title: 'Manage Subscriptions',
+        href: '/subscriptions/list', 
+        icon: Bookmark,
     },
 ];
 
 export function AppSidebar() {
     return (
-        <Sidebar collapsible="icon" variant="inset">
-            <SidebarHeader>
+        <Sidebar collapsible="icon" variant="inset" className="bg-white border-r border-gray-100">
+            {/* TOP LEFT: Branding Section */}
+            <SidebarHeader className="p-6 pb-4"> 
                 <SidebarMenu>
                     <SidebarMenuItem>
-                        <SidebarMenuButton size="lg" asChild>
-                            <Link href={dashboard()} prefetch>
-                                <AppLogo />
-                            </Link>
-                        </SidebarMenuButton>
+                        <div className="flex flex-col items-start gap-3 px-2">
+                            {/* NEW: Clean 'SUBSCRIBE' Pill Branding */}
+                            <div className="bg-black rounded-full px-5 py-1.5 flex items-center justify-center shadow-sm hover:opacity-90 transition-opacity cursor-default">
+                                <span className="text-white font-extrabold text-[11px] tracking-[0.15em] uppercase leading-none">
+                                    Subscribe
+                                </span>
+                            </div>
+                        </div>
                     </SidebarMenuItem>
                 </SidebarMenu>
             </SidebarHeader>
 
-            <SidebarContent>
+            {/* MIDDLE: Navigation items */}
+            <SidebarContent className="pt-2"> 
+                {/* Note: To remove the "Platform" text completely, you must 
+                    open components/nav-main.tsx and delete the <SidebarGroupLabel> line.
+                */}
                 <NavMain items={mainNavItems} />
             </SidebarContent>
-
-            <SidebarFooter>
-                <NavFooter items={footerNavItems} className="mt-auto" />
-                <NavUser />
-            </SidebarFooter>
         </Sidebar>
     );
 }

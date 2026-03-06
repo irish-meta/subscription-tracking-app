@@ -1,4 +1,4 @@
-import { Form, Head } from '@inertiajs/react';
+import { Head, useForm } from '@inertiajs/react';
 import { ShieldBan, ShieldCheck } from 'lucide-react';
 import { useState } from 'react';
 import Heading from '@/components/heading';
@@ -9,7 +9,6 @@ import { Button } from '@/components/ui/button';
 import { useTwoFactorAuth } from '@/hooks/use-two-factor-auth';
 import AppLayout from '@/layouts/app-layout';
 import SettingsLayout from '@/layouts/settings/layout';
-import { disable, enable, show } from '@/routes/two-factor';
 import type { BreadcrumbItem } from '@/types';
 
 type Props = {
@@ -20,7 +19,7 @@ type Props = {
 const breadcrumbs: BreadcrumbItem[] = [
     {
         title: 'Two-factor authentication',
-        href: show(),
+        href: '/settings/two-factor',
     },
 ];
 
@@ -38,12 +37,14 @@ export default function TwoFactor({
         fetchRecoveryCodes,
         errors,
     } = useTwoFactorAuth();
+    
     const [showSetupModal, setShowSetupModal] = useState<boolean>(false);
+    const { post: disable2FA, processing: disabling } = useForm();
+    const { post: enable2FA, processing: enabling } = useForm();
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Two-factor authentication" />
-
             <h1 className="sr-only">Two-factor authentication settings</h1>
 
             <SettingsLayout>
@@ -53,14 +54,12 @@ export default function TwoFactor({
                         title="Two-factor authentication"
                         description="Manage your two-factor authentication settings"
                     />
+                    
                     {twoFactorEnabled ? (
                         <div className="flex flex-col items-start justify-start space-y-4">
                             <Badge variant="default">Enabled</Badge>
-                            <p className="text-muted-foreground">
-                                With two-factor authentication enabled, you will
-                                be prompted for a secure, random pin during
-                                login, which you can retrieve from the
-                                TOTP-supported application on your phone.
+                            <p className="text-muted-foreground text-sm">
+                                With two-factor authentication enabled, you will be prompted for a secure, random pin during login.
                             </p>
 
                             <TwoFactorRecoveryCodes
@@ -69,55 +68,35 @@ export default function TwoFactor({
                                 errors={errors}
                             />
 
-                            <div className="relative inline">
-                                <Form {...disable.form()}>
-                                    {({ processing }) => (
-                                        <Button
-                                            variant="destructive"
-                                            type="submit"
-                                            disabled={processing}
-                                        >
-                                            <ShieldBan /> Disable 2FA
-                                        </Button>
-                                    )}
-                                </Form>
-                            </div>
+                            <Button
+                                variant="destructive"
+                                disabled={disabling}
+                                onClick={() => disable2FA('/user/two-factor-authentication', { method: 'delete' })}
+                            >
+                                <ShieldBan className="mr-2 h-4 w-4" /> Disable 2FA
+                            </Button>
                         </div>
                     ) : (
                         <div className="flex flex-col items-start justify-start space-y-4">
                             <Badge variant="destructive">Disabled</Badge>
-                            <p className="text-muted-foreground">
-                                When you enable two-factor authentication, you
-                                will be prompted for a secure pin during login.
-                                This pin can be retrieved from a TOTP-supported
-                                application on your phone.
+                            <p className="text-muted-foreground text-sm">
+                                When you enable two-factor authentication, you will be prompted for a secure pin during login.
                             </p>
 
                             <div>
                                 {hasSetupData ? (
-                                    <Button
-                                        onClick={() => setShowSetupModal(true)}
-                                    >
-                                        <ShieldCheck />
-                                        Continue setup
+                                    <Button onClick={() => setShowSetupModal(true)}>
+                                        <ShieldCheck className="mr-2 h-4 w-4" /> Continue setup
                                     </Button>
                                 ) : (
-                                    <Form
-                                        {...enable.form()}
-                                        onSuccess={() =>
-                                            setShowSetupModal(true)
-                                        }
+                                    <Button
+                                        disabled={enabling}
+                                        onClick={() => enable2FA('/user/two-factor-authentication', { 
+                                            onSuccess: () => setShowSetupModal(true) 
+                                        })}
                                     >
-                                        {({ processing }) => (
-                                            <Button
-                                                type="submit"
-                                                disabled={processing}
-                                            >
-                                                <ShieldCheck />
-                                                Enable 2FA
-                                            </Button>
-                                        )}
-                                    </Form>
+                                        <ShieldCheck className="mr-2 h-4 w-4" /> Enable 2FA
+                                    </Button>
                                 )}
                             </div>
                         </div>

@@ -3,13 +3,12 @@ import AppearanceTabs from '@/components/appearance-tabs';
 import Heading from '@/components/heading';
 import AppLayout from '@/layouts/app-layout';
 import SettingsLayout from '@/layouts/settings/layout';
-import { edit as editAppearance } from '@/routes/appearance';
 import type { BreadcrumbItem } from '@/types';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
         title: 'Appearance settings',
-        href: editAppearance(),
+        href: '/settings/appearance',
     },
 ];
 
@@ -17,7 +16,6 @@ export default function Appearance() {
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Appearance settings" />
-
             <h1 className="sr-only">Appearance settings</h1>
 
             <SettingsLayout>

@@ -1,120 +1,121 @@
-import { Form, Head } from '@inertiajs/react';
+import { Head, Link, useForm } from '@inertiajs/react';
 import InputError from '@/components/input-error';
-import TextLink from '@/components/text-link';
-import { Button } from '@/components/ui/button';
-import { Checkbox } from '@/components/ui/checkbox';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Spinner } from '@/components/ui/spinner';
-import AuthLayout from '@/layouts/auth-layout';
-import { register } from '@/routes';
-import { store } from '@/routes/login';
-import { request } from '@/routes/password';
 
-type Props = {
-    status?: string;
-    canResetPassword: boolean;
-    canRegister: boolean;
-};
+export default function Welcome() {
+    const { data, setData, post, processing, errors, reset } = useForm({
+        email: '',
+        password: '',
+        remember: false,
+    });
 
-export default function Login({
-    status,
-    canResetPassword,
-    canRegister,
-}: Props) {
+    const submit = (e: React.FormEvent) => {
+        e.preventDefault();
+        post('/login', {
+            onFinish: () => reset('password'),
+        });
+    };
+
     return (
-        <AuthLayout
-            title="Log in to your account"
-            description="Enter your email and password below to log in"
-        >
-            <Head title="Log in" />
+        <>
+            <Head title="Welcome" />
 
-            <Form
-                {...store.form()}
-                resetOnSuccess={['password']}
-                className="flex flex-col gap-6"
-            >
-                {({ processing, errors }) => (
-                    <>
-                        <div className="grid gap-6">
-                            <div className="grid gap-2">
-                                <Label htmlFor="email">Email address</Label>
-                                <Input
+            <div className="min-h-screen bg-[#FDFDFC] flex flex-col items-center justify-center p-6">
+               
+                <div className="w-full max-w-[600px] bg-white border border-gray-200 rounded-[2.5rem] shadow-sm overflow-hidden flex flex-col md:flex-row min-h-[500px]">
+
+                    <div className="flex-1 p-12 flex flex-col justify-center">
+
+                        <div className="mb-8">
+                            <h2 className="text-3xl font-extrabold text-gray-900 text-center">
+                                SUBSCRIPTION TRACKER
+                            </h2>
+                            <p className="text-gray-500 mt-2 text-center">
+                                Please enter your details to sign in.
+                            </p>
+                        </div>
+
+                        <form onSubmit={submit} className="space-y-5">                          
+                            <div>
+                                <label className="block text-xs font-bold text-gray-400 mb-2" htmlFor="email">
+                                    Email Address
+                                </label>
+                                <input
                                     id="email"
                                     type="email"
                                     name="email"
+                                    value={data.email}
+                                    onChange={(e) => setData('email', e.target.value)}
+                                    className={`w-full p-4 bg-gray-50 border ${errors.email ? 'border-red-500' : 'border-gray-200'} rounded-2xl focus:ring-2 focus:ring-black outline-none transition-all`}
+                                    placeholder="name@email.com"
                                     required
-                                    autoFocus
-                                    tabIndex={1}
-                                    autoComplete="email"
-                                    placeholder="email@example.com"
+                                    autoComplete="username"
                                 />
-                                <InputError message={errors.email} />
+                                <InputError message={errors.email} className="mt-2" />
                             </div>
-
-                            <div className="grid gap-2">
-                                <div className="flex items-center">
-                                    <Label htmlFor="password">Password</Label>
-                                    {canResetPassword && (
-                                        <TextLink
-                                            href={request()}
-                                            className="ml-auto text-sm"
-                                            tabIndex={5}
-                                        >
-                                            Forgot password?
-                                        </TextLink>
-                                    )}
+                        
+                            <div>
+                                <div className="flex justify-between items-center mb-2">
+                                    <label className="block text-xs font-bold text-gray-400" htmlFor="password">
+                                        Password
+                                    </label>
+                                    <Link href="/forgot-password"  className="text-xs text-gray-400 hover:text-black font-medium">
+                                        Forgot password?
+                                    </Link>
                                 </div>
-                                <Input
+                                <input
                                     id="password"
                                     type="password"
                                     name="password"
+                                    value={data.password}
+                                    onChange={(e) => setData('password', e.target.value)}
+                                    className={`w-full p-4 bg-gray-50 border ${errors.password ? 'border-red-500' : 'border-gray-200'} rounded-2xl focus:ring-2 focus:ring-black outline-none transition-all`}
+                                    placeholder="••••••••"
                                     required
-                                    tabIndex={2}
                                     autoComplete="current-password"
-                                    placeholder="Password"
                                 />
-                                <InputError message={errors.password} />
+                                <InputError message={errors.password} className="mt-2" />
                             </div>
 
-                            <div className="flex items-center space-x-3">
-                                <Checkbox
-                                    id="remember"
-                                    name="remember"
-                                    tabIndex={3}
+                            <div className="flex items-center gap-2">
+                                <input 
+                                    type="checkbox" 
+                                    id="remember" 
+                                    checked={data.remember} 
+                                    onChange={(e) => setData('remember', e.target.checked)}
+                                    className="rounded border-gray-300 text-black focus:ring-black"
                                 />
-                                <Label htmlFor="remember">Remember me</Label>
+                                <label htmlFor="remember" className="text-xs font-bold text-gray-400 cursor-pointer">
+                                    Remember me
+                                </label>
                             </div>
 
-                            <Button
-                                type="submit"
-                                className="mt-4 w-full"
-                                tabIndex={4}
-                                disabled={processing}
-                                data-test="login-button"
-                            >
-                                {processing && <Spinner />}
-                                Log in
-                            </Button>
-                        </div>
+                            <div className="pt-2 space-y-4">
+                                <button
+                                    type="submit"
+                                    disabled={processing}
+                                    className="w-full py-4 bg-black text-white rounded-2xl font-bold hover:bg-zinc-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                                >
+                                    {processing ? "Signing in..." : "Sign In"}
+                                </button>
 
-                        {canRegister && (
-                            <div className="text-center text-sm text-muted-foreground">
-                                Don't have an account?{' '}
-                                <TextLink href={register()} tabIndex={5}>
-                                    Sign up
-                                </TextLink>
+                                <p className="text-center text-sm text-gray-500">
+                                    Don't have an account?{' '}
+                                    <Link href="/register" className="font-bold text-black hover:underline">
+                                        Registered
+                                    </Link>
+                                </p>
                             </div>
-                        )}
-                    </>
-                )}
-            </Form>
 
-            {status && (
-                <div className="mb-4 text-center text-sm font-medium text-green-600">
-                    {status}
+                        </form>
+                    </div>
+
                 </div>
-            )}
-        </AuthLayout>
+
+                <p className="mt-8 text-sm text-gray-400">
+                    © 2026 Subscription Tracker. All rights reserved.
+                </p>
+
+            </div>
+        </>
     );
 }

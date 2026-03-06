@@ -29,8 +29,7 @@ class User extends Authenticatable
             'two_factor_confirmed_at' => 'datetime',
         ];
     }
-
-    // This links the user to their subscriptions
+    
     public function subscriptions(): HasMany
     {
         return $this->hasMany(Subscription::class);

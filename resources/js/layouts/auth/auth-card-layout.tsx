@@ -8,7 +8,7 @@ import {
     CardHeader,
     CardTitle,
 } from '@/components/ui/card';
-import { home } from '@/routes';
+
 
 export default function AuthCardLayout({
     children,
@@ -23,7 +23,7 @@ export default function AuthCardLayout({
         <div className="flex min-h-svh flex-col items-center justify-center gap-6 bg-muted p-6 md:p-10">
             <div className="flex w-full max-w-md flex-col gap-6">
                 <Link
-                    href={home()}
+                    href="/" // Hardcoded string path to the home/welcome page
                     className="flex items-center gap-2 self-center font-medium"
                 >
                     <div className="flex h-9 w-9 items-center justify-center">
@@ -32,9 +32,9 @@ export default function AuthCardLayout({
                 </Link>
 
                 <div className="flex flex-col gap-6">
-                    <Card className="rounded-xl">
+                    <Card className="rounded-xl shadow-lg border-gray-200">
                         <CardHeader className="px-10 pt-8 pb-0 text-center">
-                            <CardTitle className="text-xl">{title}</CardTitle>
+                            <CardTitle className="text-xl font-bold">{title}</CardTitle>
                             <CardDescription>{description}</CardDescription>
                         </CardHeader>
                         <CardContent className="px-10 py-8">

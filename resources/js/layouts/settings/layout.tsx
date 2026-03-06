@@ -5,31 +5,28 @@ import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import { useCurrentUrl } from '@/hooks/use-current-url';
 import { cn, toUrl } from '@/lib/utils';
-import { edit as editAppearance } from '@/routes/appearance';
-import { edit } from '@/routes/profile';
-import { show } from '@/routes/two-factor';
-import { edit as editPassword } from '@/routes/user-password';
 import type { NavItem } from '@/types';
+
 
 const sidebarNavItems: NavItem[] = [
     {
         title: 'Profile',
-        href: edit(),
+        href: '/settings', 
         icon: null,
     },
     {
         title: 'Password',
-        href: editPassword(),
+        href: '/settings/password', 
         icon: null,
     },
     {
         title: 'Two-factor auth',
-        href: show(),
+        href: '/settings/two-factor', 
         icon: null,
     },
     {
         title: 'Appearance',
-        href: editAppearance(),
+        href: '/settings/appearance', 
         icon: null,
     },
 ];
@@ -37,7 +34,7 @@ const sidebarNavItems: NavItem[] = [
 export default function SettingsLayout({ children }: PropsWithChildren) {
     const { isCurrentOrParentUrl } = useCurrentUrl();
 
-    // When server-side rendering, we only render the layout on the client...
+    
     if (typeof window === 'undefined') {
         return null;
     }

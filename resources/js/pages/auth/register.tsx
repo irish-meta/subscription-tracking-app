@@ -1,114 +1,129 @@
-import { Form, Head } from '@inertiajs/react';
+import { Head, Link, useForm } from '@inertiajs/react';
 import InputError from '@/components/input-error';
-import TextLink from '@/components/text-link';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Spinner } from '@/components/ui/spinner';
-import AuthLayout from '@/layouts/auth-layout';
-import { login } from '@/routes';
-import { store } from '@/routes/register';
 
 export default function Register() {
+    const { data, setData, post, processing, errors, reset } = useForm({
+        name: '',
+        email: '',
+        password: '',
+        password_confirmation: '',
+    });
+
+    const submit = (e: React.FormEvent) => {
+        e.preventDefault();
+        post('/register', {
+            onFinish: () => reset('password', 'password_confirmation'),
+        });
+    };
+
     return (
-        <AuthLayout
-            title="Create an account"
-            description="Enter your details below to create your account"
-        >
-            <Head title="Register" />
-            <Form
-                {...store.form()}
-                resetOnSuccess={['password', 'password_confirmation']}
-                disableWhileProcessing
-                className="flex flex-col gap-6"
-            >
-                {({ processing, errors }) => (
-                    <>
-                        <div className="grid gap-6">
-                            <div className="grid gap-2">
-                                <Label htmlFor="name">Name</Label>
-                                <Input
+        <>
+            <Head title="Create Account" />
+
+            <div className="min-h-screen bg-[#FDFDFC] flex flex-col items-center justify-center p-6">
+                
+                <div className="w-full max-w-[600px] bg-white border border-gray-200 rounded-[2.5rem] shadow-sm overflow-hidden flex flex-col md:flex-row min-h-[600px]">
+
+                    <div className="flex-1 p-12 flex flex-col justify-center">
+                        <div className="text-center mb-8">
+                            <h2 className="text-3xl font-extrabold text-gray-900">
+                                Create account
+                            </h2>
+                            <p className="text-gray-500 mt-2">
+                                Join us to start tracking your subscriptions.
+                            </p>
+                        </div>
+
+                        <form onSubmit={submit} className="space-y-4">
+                            <div>
+                                <label className="block text-xs font-bold text-gray-400 mb-2" htmlFor="name">
+                                    Full Name
+                                </label>
+                                <input
                                     id="name"
                                     type="text"
+                                    value={data.name}
+                                    onChange={(e) => setData('name', e.target.value)}
+                                    className={`w-full p-4 bg-gray-50 border ${errors.name ? 'border-red-500' : 'border-gray-200'} rounded-2xl focus:ring-2 focus:ring-black outline-none transition-all`}
+                                    placeholder="John Doe"
                                     required
                                     autoFocus
-                                    tabIndex={1}
-                                    autoComplete="name"
-                                    name="name"
-                                    placeholder="Full name"
                                 />
-                                <InputError
-                                    message={errors.name}
-                                    className="mt-2"
-                                />
+                                <InputError message={errors.name} className="mt-2" />
                             </div>
 
-                            <div className="grid gap-2">
-                                <Label htmlFor="email">Email address</Label>
-                                <Input
+                            <div>
+                                <label className="block text-xs font-bold text-gray-400 mb-2" htmlFor="email">
+                                    Email Address
+                                </label>
+                                <input
                                     id="email"
                                     type="email"
+                                    value={data.email}
+                                    onChange={(e) => setData('email', e.target.value)}
+                                    className={`w-full p-4 bg-gray-50 border ${errors.email ? 'border-red-500' : 'border-gray-200'} rounded-2xl focus:ring-2 focus:ring-black outline-none transition-all`}
+                                    placeholder="name@email.com"
                                     required
-                                    tabIndex={2}
-                                    autoComplete="email"
-                                    name="email"
-                                    placeholder="email@example.com"
                                 />
-                                <InputError message={errors.email} />
+                                <InputError message={errors.email} className="mt-2" />
                             </div>
 
-                            <div className="grid gap-2">
-                                <Label htmlFor="password">Password</Label>
-                                <Input
+                            <div>
+                                <label className="block text-xs font-bold text-gray-400 mb-2" htmlFor="password">
+                                    Password
+                                </label>
+                                <input
                                     id="password"
                                     type="password"
+                                    value={data.password}
+                                    onChange={(e) => setData('password', e.target.value)}
+                                    className={`w-full p-4 bg-gray-50 border ${errors.password ? 'border-red-500' : 'border-gray-200'} rounded-2xl focus:ring-2 focus:ring-black outline-none transition-all`}
+                                    placeholder="••••••••"
                                     required
-                                    tabIndex={3}
-                                    autoComplete="new-password"
-                                    name="password"
-                                    placeholder="Password"
                                 />
-                                <InputError message={errors.password} />
+                                <InputError message={errors.password} className="mt-2" />
                             </div>
 
-                            <div className="grid gap-2">
-                                <Label htmlFor="password_confirmation">
-                                    Confirm password
-                                </Label>
-                                <Input
+                            <div>
+                                <label className="block text-xs font-bold text-gray-400 mb-2" htmlFor="password_confirmation">
+                                    Confirm Password
+                                </label>
+                                <input
                                     id="password_confirmation"
                                     type="password"
+                                    value={data.password_confirmation}
+                                    onChange={(e) => setData('password_confirmation', e.target.value)}
+                                    className={`w-full p-4 bg-gray-50 border ${errors.password_confirmation ? 'border-red-500' : 'border-gray-200'} rounded-2xl focus:ring-2 focus:ring-black outline-none transition-all`}
+                                    placeholder="••••••••"
                                     required
-                                    tabIndex={4}
-                                    autoComplete="new-password"
-                                    name="password_confirmation"
-                                    placeholder="Confirm password"
                                 />
-                                <InputError
-                                    message={errors.password_confirmation}
-                                />
+                                <InputError message={errors.password_confirmation} className="mt-2" />
                             </div>
 
-                            <Button
-                                type="submit"
-                                className="mt-2 w-full"
-                                tabIndex={5}
-                                data-test="register-user-button"
-                            >
-                                {processing && <Spinner />}
-                                Create account
-                            </Button>
-                        </div>
+                            <div className="pt-4 space-y-4">
+                                <button
+                                    type="submit"
+                                    disabled={processing}
+                                    className="w-full py-4 bg-black text-white rounded-2xl font-bold hover:bg-zinc-800 transition-colors disabled:opacity-50"
+                                >
+                                    {processing ? "Creating account..." : "Create Account"}
+                                </button>
 
-                        <div className="text-center text-sm text-muted-foreground">
-                            Already have an account?{' '}
-                            <TextLink href={login()} tabIndex={6}>
-                                Log in
-                            </TextLink>
-                        </div>
-                    </>
-                )}
-            </Form>
-        </AuthLayout>
+                                <p className="text-center text-sm text-gray-500">
+                                    Already have an account?{' '}
+                                    <Link href="/login" className="font-bold text-black hover:underline">
+                                        Log in
+                                    </Link>
+                                </p>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <p className="mt-8 text-sm text-gray-400">
+                    © 2026 Subscription Tracker. All rights reserved.
+                </p>
+            </div>
+        </>
     );
 }
